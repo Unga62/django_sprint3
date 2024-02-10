@@ -2,9 +2,10 @@ from django.db import models
 
 
 class PublishedModel(models.Model):
-    """Абстрактаная модель для вывода флага публикации
-    и времени создания записи
+    """Абстрактная модель. Добавляет флаг is_published
+    и метку создания записи created_at.
     """
+
     is_published = models.BooleanField(default=True,
                                        verbose_name='Опубликовано',
                                        help_text='Снимите галочку,'
@@ -17,7 +18,8 @@ class PublishedModel(models.Model):
 
 
 class TitleModel(models.Model):
-    """Абстрактаная модель для вывода заголовка"""
+    """Абстрактаная модель. Добавляет title - наименование заголовка"""
+
     title = models.CharField(max_length=256, verbose_name='Заголовок')
 
     class Meta:
