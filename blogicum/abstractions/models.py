@@ -1,5 +1,7 @@
 from django.db import models
 
+from blog.config import MAX_LINE_SIZE, LINE_SLICE
+
 
 class PublishedModel(models.Model):
     """Абстрактная модель. Добавляет флаг is_published
@@ -20,7 +22,11 @@ class PublishedModel(models.Model):
 class TitleModel(models.Model):
     """Абстрактаная модель. Добавляет title - наименование заголовка"""
 
-    title = models.CharField(max_length=256, verbose_name='Заголовок')
+    title = models.CharField(max_length=MAX_LINE_SIZE,
+                             verbose_name='Заголовок')
 
     class Meta:
         abstract = True
+
+    def __str__(self) -> str:
+        return self.title[:LINE_SLICE]

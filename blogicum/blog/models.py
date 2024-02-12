@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+
 from abstractions.models import PublishedModel, TitleModel
+from blog.config import MAX_LINE_SIZE, LINE_SLICE
 
 User = get_user_model()
 
@@ -28,16 +30,13 @@ class Post(PublishedModel, TitleModel):
         'Category',
         on_delete=models.SET_NULL,
         null=True,
-        blank=False,
         verbose_name='Категория'
     )
 
     class Meta:
         verbose_name = 'публикация'
         verbose_name_plural = 'Публикации'
-
-    def __str__(self) -> str:
-        return self.title
+        ordering = ('-pub_date',)
 
 
 class Category(PublishedModel, TitleModel):
@@ -51,16 +50,14 @@ class Category(PublishedModel, TitleModel):
         verbose_name = 'категория'
         verbose_name_plural = 'Категории'
 
-    def __str__(self) -> str:
-        return self.title
-
 
 class Location(PublishedModel):
-    name = models.CharField(max_length=256, verbose_name='Название места')
+    name = models.CharField(max_length=MAX_LINE_SIZE,
+                            verbose_name='Название места')
 
     class Meta:
         verbose_name = 'местоположение'
         verbose_name_plural = 'Местоположения'
 
     def __str__(self) -> str:
-        return self.name
+        return self.name[:LINE_SLICE]

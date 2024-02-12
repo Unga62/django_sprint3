@@ -1,7 +1,10 @@
 from django.contrib import admin
+from django.contrib.auth.models import Group
+
 from .models import Category, Post, Location
 
 
+@admin.register(Post)
 class PostModel(admin.ModelAdmin):
     list_display = (
         'title',
@@ -27,6 +30,7 @@ class PostModel(admin.ModelAdmin):
     list_display_links = ('title',)
 
 
+@admin.register(Category)
 class CategoryModel(admin.ModelAdmin):
     list_display = (
         'title',
@@ -44,6 +48,7 @@ class CategoryModel(admin.ModelAdmin):
     search_fields = ('title',)
 
 
+@admin.register(Location)
 class LocationModel(admin.ModelAdmin):
     list_display = (
         'name',
@@ -52,6 +57,4 @@ class LocationModel(admin.ModelAdmin):
     )
 
 
-admin.site.register(Category, CategoryModel)
-admin.site.register(Post, PostModel)
-admin.site.register(Location, LocationModel)
+admin.site.unregister(Group)
