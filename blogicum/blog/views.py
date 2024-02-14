@@ -19,7 +19,7 @@ def postpublished():
 def index(request):
     """Функция возвращает все посты на главной странице"""
     templates = 'blog/index.html'
-    posts = Post.objects.select_related('author').all().filter(
+    posts = Post.objects.select_related('author').filter(
         Q(postpublished()))[:POST_SLICE]
     context = {'posts': posts}
     return render(request, templates, context)
@@ -38,7 +38,7 @@ def category_posts(request, category_slug):
     templates = 'blog/category.html'
     category = get_object_or_404(Category, slug=category_slug,
                                  is_published=True)
-    posts = category.posts.all().filter(postpublished()
-                                        & Q(category__slug=category_slug))
+    posts = category.posts.filter(postpublished()
+                                  & Q(category__slug=category_slug))
     context = {'category': category, 'post_list': posts}
     return render(request, templates, context)
