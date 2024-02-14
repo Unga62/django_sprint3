@@ -29,8 +29,9 @@ class Post(PublishedModel, TitleModel):
     category = models.ForeignKey(
         'Category',
         on_delete=models.SET_NULL,
+        related_name='posts',
         null=True,
-        verbose_name='Категория'
+        verbose_name='Категория',
     )
 
     class Meta:

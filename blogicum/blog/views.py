@@ -3,18 +3,24 @@ from django.db.models import Q
 from django.utils import timezone
 
 from blog.models import Post, Category
+from blog.config import POST_SLICE
 
 
-def time_pub():
-    """Функция возвращает проверку времени и флага публикации"""
-    return Q(pub_date__date__lt=timezone.now()) & Q(is_published=True)
+def postpublished():
+    """Функция возвращает проверку времени, флага публикации,
+    проверку публикации категории
+    """
+    return (
+        Q(pub_date__date__lt=timezone.now()) & Q(is_published=True)
+        & Q(category__is_published=True)
+    )
 
 
 def index(request):
     """Функция возвращает все посты на главной странице"""
     templates = 'blog/index.html'
     posts = Post.objects.select_related('author').all().filter(
-        Q(time_pub()) & Q(category__is_published=True))[:5]
+        Q(postpublished()))[:POST_SLICE]
     context = {'posts': posts}
     return render(request, templates, context)
 
@@ -22,8 +28,7 @@ def index(request):
 def post_detail(request, id):
     """Функция возвращает детализированную информацию поста"""
     templates = 'blog/detail.html'
-    post = get_object_or_404(Post, time_pub(), category__is_published=True,
-                             pk=id)
+    post = get_object_or_404(Post, postpublished(), pk=id)
     context = {'post': post}
     return render(request, templates, context)
 
@@ -31,9 +36,9 @@ def post_detail(request, id):
 def category_posts(request, category_slug):
     """Функция возвращает страницу категории публикации"""
     templates = 'blog/category.html'
-    post_list = get_list_or_404(Post, time_pub()
-                                & Q(category__slug=category_slug))
-    category = get_object_or_404(Category, Q(slug=category_slug)
-                                 & Q(is_published=True))
-    context = {'category': category, 'post_list': post_list}
+    category = get_object_or_404(Category, slug=category_slug,
+                                 is_published=True)
+    posts = category.posts.all().filter(postpublished()
+                                        & Q(category__slug=category_slug))
+    context = {'category': category, 'post_list': posts}
     return render(request, templates, context)
